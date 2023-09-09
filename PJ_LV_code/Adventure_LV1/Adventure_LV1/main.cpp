@@ -33,8 +33,18 @@ int* Seg_tree_const(int* list,int n)
 
 int Query_sum(int* seg_tree,int start,int end,int q_s,int q_e,int current)
 {
-	if(q_s <=)
-	return 
+	if (q_s <= start && end >= end)
+	{
+		return seg_tree[current];
+	}
+	if (end<q_s || start>q_e)
+	{
+		return 0;
+	}
+	int mid = start + (end - start);
+	int child = 2 * current;
+	return Query_sum(seg_tree, start, mid, q_s, q_e, child + 1) +
+		   Query_sum(seg_tree, mid + 1, end, q_s, q_e, child + 2);
 }
 
 int Get_query(int* seg_tree,int n,int q_s,int q_e)
