@@ -2,9 +2,9 @@
 #include<cmath>
 using namespace std;
 
-
 int* list;
 int* seg_tree;
+double t_size;
 
 int Construct_tree(int* list, int start, int end, int* seg_tree, int current)
 {
@@ -22,8 +22,9 @@ int Construct_tree(int* list, int start, int end, int* seg_tree, int current)
 
 int* Seg_tree_const(int* list, int n)
 {
-	float height = log(n);
-	float t_size = 2 * pow(2, height) - 1;
+	double height = ceil(log2(n));
+	t_size = 2 * pow(2, height) - 1;
+
 	seg_tree = new int[t_size];
 	Construct_tree(list, 0, n - 1, seg_tree, 0);
 	return seg_tree;
@@ -49,8 +50,8 @@ int Query_sum(int* seg_tree, int start, int end, int q_s, int q_e, int current)
 // 세그먼트 트리에서 특정 위치의 값을 조회하는 함수
 int Get_query(int* seg_tree, int n, int q_s, int q_e, int current)
 {
-	if (q_s<0 || q_e > n - 1 || q_e > q_s)return -1;
-	int sum = Query_sum(seg_tree, 0, n - 1, q_s, q_s, current);
+	if (q_s < 0 || q_e > n - 1 || q_e > q_s) return 0;
+	int sum = Query_sum(seg_tree, 0, n - 1, q_s, q_e, current);
 	return sum;
 }
 
@@ -72,6 +73,22 @@ int* Segtree_update(int* seg_tree, int start, int end, int i, int d_value, int c
 	return seg_tree;
 }
 
+void print_seg()
+{
+	for (int i = 0; i < t_size; i++)
+	{
+		if (seg_tree[i] < 0)
+		{
+			cout << "N ";
+		}
+		else
+		{
+			cout << seg_tree[i] << " ";
+		}
+	}
+	cout << endl;
+}
+
 int main()
 {
 	int n, end;
@@ -88,25 +105,31 @@ int main()
 	}
 
 	Seg_tree_const(list, n);
-	
+
 	cout << "세그먼트 트리 출력: ";
-	
-	cout << "원하는 부분합 위치와 값(start, end): " << endl;
+	print_seg();
+
+	cout << "원하는 부분합 위치와 값(start, end): ";
 	int a, b;
 	cin >> a >> b;
+
 	int sum = Query_sum(seg_tree, 0, end, a, b, 0);
 	cout << "부분합: " << sum << endl;
-	
-	int getq = Get_query(seg_tree, n, 3, 3, 0);
-	cout << "Get Query" << getq << endl;
 
 	cout << "변경할 위치와 값: ";
 	int date;
 	int dvalue;
 	cin >> date >> dvalue;
+
 	Segtree_update(seg_tree, 0, end, date, dvalue, 0);
 	int t = Get_query(seg_tree, n, date, date, 0);
-	cout << t;
-	
+	cout << "변경한 위치(" << date << ") 의 값: " << t << endl;
+
+	cout << "변경된 세그먼트 트리 출력: ";
+	print_seg();
+
+	delete[] list;
+	delete[] seg_tree;
+
 	return 0;
 }
